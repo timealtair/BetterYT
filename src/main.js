@@ -1,5 +1,5 @@
 function hideVideosByLanguage(selectors, titleSelectors, shortsSelector,
-                              shortsSelector, parentSelector, langRange) {
+    shortsTitleAttribute, parentSelector, langRange, shortsPanelSelector) {
     const regex = new RegExp(langRange);
 
     const videoElements = document.querySelectorAll(selectors);
@@ -12,10 +12,19 @@ function hideVideosByLanguage(selectors, titleSelectors, shortsSelector,
 
     const shortsElements = document.querySelectorAll(shortsSelector);
     shortsElements.forEach(short => {
-        const title = short.getAttribute(shortsSelector);
+        const title = short.getAttribute(shortsTitleAttribute);
         const parentElement = short.closest(parentSelector);
         if (title && regex.test(title) && parentElement) {
             parentElement.style.display = 'none';
+        }
+    });
+
+    const shortsPanels = document.querySelectorAll(shortsPanelSelector);
+    shortsPanels.forEach(section => {
+        const videos = section.querySelectorAll(selectors);
+        const hiddenVideos = section.querySelectorAll(`${selectors}[style*="display: none"]`);
+        if (videos.length === hiddenVideos.length) {
+            section.style.display = 'none';
         }
     });
 }
@@ -25,13 +34,14 @@ const titleSelectors = '#video-title';
 const shortsSelector = 'a.shortsLockupViewModelHostEndpoint';
 const shortsTitleAttribute = 'title';
 const parentSelector = 'ytd-rich-item-renderer';
-const langRange = '[\u0400-\u04FF]'
+const langRange = '[\\u0400-\\u04FF]';
+const shortsPanelSelector = 'ytd-rich-section-renderer';
 
 hideVideosByLanguage(selectors, titleSelectors, shortsSelector,
-                     shortsTitleAttribute, parentSelector, langRange);
+                     shortsTitleAttribute, parentSelector, langRange, shortsPanelSelector);
 
 const observer = new MutationObserver(() => {
     hideVideosByLanguage(selectors, titleSelectors, shortsSelector,
-                         shortsTitleAttribute, parentSelector);
+                         shortsTitleAttribute, parentSelector, langRange, shortsPanelSelector);
 });
 observer.observe(document.body, { childList: true, subtree: true });
