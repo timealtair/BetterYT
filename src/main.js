@@ -1,5 +1,5 @@
-function hideVideosByLanguage(selectors, titleSelectors, shortsSelector,
-    shortsTitleAttribute, parentSelector, langRange, shortsPanelSelector) {
+function hideVideosByLanguage(selectors, titleSelectors, shortsSelector, shortsTitleAttribute, 
+                              parentSelector, langRange, shortsPanelSelector) {
     const regex = new RegExp(langRange);
 
     function isAlreadyHidden(element, hiddenSelector) {
