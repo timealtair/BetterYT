@@ -1,31 +1,37 @@
-function hideRussianVideos(selectors, title_selectors, shorts_selector, shorts_title_attribute, parent_selector) {
+function hideVideosByLanguage(selectors, titleSelectors, shortsSelector,
+                              shortsSelector, parentSelector, langRange) {
+    const regex = new RegExp(langRange);
+
     const videoElements = document.querySelectorAll(selectors);
     videoElements.forEach(video => {
-        const titleElement = video.querySelector(title_selectors);
-        if (titleElement && /[\u0400-\u04FF]/.test(titleElement.textContent)) {
+        const titleElement = video.querySelector(titleSelectors);
+        if (titleElement && regex.test(titleElement.textContent)) {
             video.style.display = 'none';
         }
     });
 
-    const shortsElements = document.querySelectorAll(shorts_selector);
+    const shortsElements = document.querySelectorAll(shortsSelector);
     shortsElements.forEach(short => {
-        const title = short.getAttribute(shorts_title_attribute);
-        const parentElement = short.closest(parent_selector);
-        if (title && /[\u0400-\u04FF]/.test(title) && parentElement) {
+        const title = short.getAttribute(shortsSelector);
+        const parentElement = short.closest(parentSelector);
+        if (title && regex.test(title) && parentElement) {
             parentElement.style.display = 'none';
         }
     });
 }
 
 const selectors = 'ytd-rich-item-renderer';
-const title_selectors = '#video-title';
-const shorts_selector = 'a.shortsLockupViewModelHostEndpoint';
-const shorts_title_attribute = 'title';
-const parent_selector = 'ytd-rich-item-renderer';
+const titleSelectors = '#video-title';
+const shortsSelector = 'a.shortsLockupViewModelHostEndpoint';
+const shortsTitleAttribute = 'title';
+const parentSelector = 'ytd-rich-item-renderer';
+const langRange = '[\u0400-\u04FF]'
 
-hideRussianVideos(selectors, title_selectors, shorts_selector, shorts_title_attribute, parent_selector);
+hideVideosByLanguage(selectors, titleSelectors, shortsSelector,
+                     shortsTitleAttribute, parentSelector, langRange);
 
 const observer = new MutationObserver(() => {
-    hideRussianVideos(selectors, title_selectors, shorts_selector, shorts_title_attribute, parent_selector);
+    hideVideosByLanguage(selectors, titleSelectors, shortsSelector,
+                         shortsTitleAttribute, parentSelector);
 });
 observer.observe(document.body, { childList: true, subtree: true });
