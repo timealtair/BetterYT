@@ -2,20 +2,28 @@ function hideVideosByLanguage(selectors, titleSelectors, shortsSelector,
     shortsTitleAttribute, parentSelector, langRange, shortsPanelSelector) {
     const regex = new RegExp(langRange);
 
+    function isAlreadyHidden(element, hiddenSelector) {
+        return element.closest(hiddenSelector)?.style.display === 'none';
+    }
+
     const videoElements = document.querySelectorAll(selectors);
     videoElements.forEach(video => {
-        const titleElement = video.querySelector(titleSelectors);
-        if (titleElement && regex.test(titleElement.textContent)) {
-            video.style.display = 'none';
+        if (!isAlreadyHidden(video, parentSelector)) {
+            const titleElement = video.querySelector(titleSelectors);
+            if (titleElement && regex.test(titleElement.textContent)) {
+                video.style.display = 'none';
+            }
         }
     });
 
     const shortsElements = document.querySelectorAll(shortsSelector);
     shortsElements.forEach(short => {
-        const title = short.getAttribute(shortsTitleAttribute);
-        const parentElement = short.closest(parentSelector);
-        if (title && regex.test(title) && parentElement) {
-            parentElement.style.display = 'none';
+        if (!isAlreadyHidden(short.closest(parentSelector), shortsPanelSelector)) {
+            const title = short.getAttribute(shortsTitleAttribute);
+            const parentElement = short.closest(parentSelector);
+            if (title && regex.test(title) && parentElement) {
+                parentElement.style.display = 'none';
+            }
         }
     });
 
